@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Message Copier</title>
+
+<style>
+
+body{
+    background:#111;
+    color:white;
+    font-family:Arial;
+    padding:20px;
+    text-align:center;
+}
+
+textarea{
+    width:95%;
+    border:none;
+    border-radius:10px;
+    padding:10px;
+    font-size:16px;
+    margin-top:10px;
+}
+
+#inputMessages{
+    height:200px;
+}
+
+#outputMessage{
+    height:120px;
+    background:#222;
+    color:#00ff99;
+}
+
+button{
+    margin-top:15px;
+    padding:15px 25px;
+    font-size:18px;
+    border:none;
+    border-radius:10px;
+    margin-right:10px;
+}
+
+.startBtn{
+    background:#0984e3;
+    color:white;
+}
+
+.copyBtn{
+    background:#00b894;
+    color:white;
+}
+
+#count{
+    margin-top:15px;
+    color:#aaa;
+}
+
+</style>
+</head>
+
+<body>
+
+<h2>Message Generator</h2>
+
+<p>Paste all messages below (ONE MESSAGE PER LINE)</p>
+
+<textarea id="inputMessages" placeholder="hello
+good morning
+how are you"></textarea>
+
+<br>
+
+<button class="startBtn" onclick="startMessages()">START</button>
+
+<h3>Current Message</h3>
+
+<textarea id="outputMessage" readonly></textarea>
+
+<br>
+
+<button class="copyBtn" onclick="copyMessage()">COPY NEXT</button>
+
+<div id="count">0 / 0</div>
+
+<script>
+
+let messages = [];
+let usedIndexes = [];
+let currentMessage = "";
+
+function startMessages(){
+
+    let raw = document.getElementById("inputMessages").value;
+
+    messages = raw
+        .split("\n")
+        .map(msg => msg.trim())
+        .filter(msg => msg !== "");
+
+    usedIndexes = [];
+
+    if(messages.length === 0){
+        alert("Please add messages first.");
+        return;
+    }
+
+    nextMessage();
+}
+
+function nextMessage(){
+
+    if(usedIndexes.length === messages.length){
+        usedIndexes = [];
+        alert("All messages used. Restarting.");
+    }
+
+    let index;
+
+    do{
+        index = Math.floor(Math.random() * messages.length);
+    }
+    while(usedIndexes.includes(index));
+
+    usedIndexes.push(index);
+
+    currentMessage = messages[index];
+
+    document.getElementById("outputMessage").value = currentMessage;
+
+    document.getElementById("count").innerText =
+        usedIndexes.length + " / " + messages.length;
+}
+
+function copyMessage(){
+
+    if(currentMessage === ""){
+        alert("Press START first.");
+        return;
+    }
+
+    navigator.clipboard.writeText(currentMessage);
+
+    nextMessage();
+}
+
+</script>
+
+</body>
+</html>
